@@ -38,10 +38,10 @@ func identityFromSeed(label string, entityType EntityType, name string) *Identit
 // derived from public keys. Other implementations should reproduce these exact values.
 func TestVector_IdentityDerivation(t *testing.T) {
 	vectors := []struct {
-		seedLabel   string
-		entityType  EntityType
-		name        string
-		expectID    string // sha256:<hex>
+		seedLabel    string
+		entityType   EntityType
+		name         string
+		expectID     string // sha256:<hex>
 		expectPubB64 string // base64url(pubkey)
 	}{
 		{
@@ -603,10 +603,10 @@ func TestVector_GenerateJSON(t *testing.T) {
 		},
 
 		"delegation": map[string]interface{}{
-			"_comment":         "Delegation from Alice (human) to Bob (agent). Signature is Ed25519(canonical_json(delegation with signature=\"\")).",
-			"canonical_payload": string(payload),
+			"_comment":              "Delegation from Alice (human) to Bob (agent). Signature is Ed25519(canonical_json(delegation with signature=\"\")).",
+			"canonical_payload":     string(payload),
 			"canonical_payload_hex": hex.EncodeToString(payload),
-			"signed_delegation": d,
+			"signed_delegation":     d,
 		},
 
 		"capability_narrowing": []map[string]interface{}{

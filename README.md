@@ -315,16 +315,16 @@ pact/
 
 See [CAPABILITIES.md](CAPABILITIES.md) for the shared vocabulary proposals across domains:
 
-| Domain | Resource prefix | Example |
-|---|---|---|
-| Code hosting | `repo:` | `repo:pr:create,repo=myorg/*` |
-| Deployment | `deploy:` | `deploy:create,env=staging` |
-| Storage | `storage:`, `db:` | `storage:read,bucket=my-bucket` |
-| Communication | `email:`, `chat:` | `email:send,to=*@company.com` |
-| AI/ML | `model:` | `model:inference,cost<100USD` |
-| Compute | `compute:`, `dns:` | `compute:create,region=us-east-1` |
-| Filesystem | `fs:` | `fs:write,path=/src/*` |
-| Generic API | `api:` | `api:read,path=/v1/users/*` |
+| Domain        | Resource prefix    | Example                           |
+| ------------- | ------------------ | --------------------------------- |
+| Code hosting  | `repo:`            | `repo:pr:create,repo=myorg/*`     |
+| Deployment    | `deploy:`          | `deploy:create,env=staging`       |
+| Storage       | `storage:`, `db:`  | `storage:read,bucket=my-bucket`   |
+| Communication | `email:`, `chat:`  | `email:send,to=*@company.com`     |
+| AI/ML         | `model:`           | `model:inference,cost<100USD`     |
+| Compute       | `compute:`, `dns:` | `compute:create,region=us-east-1` |
+| Filesystem    | `fs:`              | `fs:write,path=/src/*`            |
+| Generic API   | `api:`             | `api:read,path=/v1/users/*`       |
 
 ### Cross-Language Test Vectors
 
@@ -336,6 +336,7 @@ go test -run TestVector_GenerateJSON -v
 ```
 
 Vectors cover:
+
 - **Identity derivation** — seed → Ed25519 keypair → `sha256:` ID
 - **Canonical JSON** — RFC 8785 JCS output for known inputs
 - **Delegation signing** — canonical payload, signature bytes, signed object
