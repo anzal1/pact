@@ -1,0 +1,148 @@
+{
+  "_comment": "Pact protocol reference test vectors. Deterministic keys from SHA-256(\"pact-test-vector:\" + label).",
+  "_version": "1.0",
+  "canonical_json": [
+    {
+      "input": {
+        "alpha": "first",
+        "mid": "middle",
+        "zebra": "last"
+      },
+      "output": "{\"alpha\":\"first\",\"mid\":\"middle\",\"zebra\":\"last\"}"
+    },
+    {
+      "input": {
+        "a": "value",
+        "b": {
+          "x": 1,
+          "y": 2
+        }
+      },
+      "output": "{\"a\":\"value\",\"b\":{\"x\":1,\"y\":2}}"
+    }
+  ],
+  "capability_narrowing": [
+    {
+      "child": "repo:read",
+      "covers": true,
+      "parent": "*"
+    },
+    {
+      "child": "repo:read",
+      "covers": true,
+      "parent": "repo:*"
+    },
+    {
+      "child": "repo:pr:create",
+      "covers": true,
+      "parent": "repo:*"
+    },
+    {
+      "child": "repo:write",
+      "covers": false,
+      "parent": "repo:read"
+    },
+    {
+      "child": "repo:read,repo=owner/myrepo",
+      "covers": true,
+      "parent": "repo:read,repo=owner/*"
+    },
+    {
+      "child": "repo:read,repo=other/myrepo",
+      "covers": false,
+      "parent": "repo:read,repo=owner/*"
+    },
+    {
+      "child": "deploy:create,env=production",
+      "covers": false,
+      "parent": "deploy:create,env=staging"
+    }
+  ],
+  "content_digest": [
+    {
+      "body": "{\"action\":\"deploy\"}",
+      "digest": "sha-256=:en70zgksQ1BbuXWwkeXp5dV7tBEv_8CuW25PuZTVGCQ:"
+    },
+    {
+      "body": "hello world",
+      "digest": "sha-256=:uU0nuZNNPgilLlLX2n2r-sSE7-N6U4DukIj3rOLvzek:"
+    }
+  ],
+  "delegation": {
+    "_comment": "Delegation from Alice (human) to Bob (agent). Signature is Ed25519(canonical_json(delegation with signature=\"\")).",
+    "canonical_payload": "{\"capabilities\":[\"repo:read,repo=myorg/*\",\"deploy:create,env=staging\"],\"constraints\":{\"expires\":\"2099-01-01T00:00:00Z\",\"max_chain_depth\":2,\"not_before\":\"2025-01-01T00:00:00Z\"},\"from\":{\"id\":\"sha256:e48168a2c397cdb686fe0a9504c655c634342a397ebac5646952918515e35691\",\"name\":\"Alice\",\"public_key\":\"csCrdGI3Ei4IiqJ-IxrmgudPQiUdy14D2Vj2JxyXXzM\",\"type\":\"human\"},\"id\":\"d-testvector-0001\",\"issued_at\":\"2025-01-01T00:00:00Z\",\"signature\":\"\",\"to\":{\"id\":\"sha256:c80ac8ba85259ac08f766c49b59a828f6d5985ae2153e5c108955c03607526da\",\"name\":\"Bob's Agent\",\"public_key\":\"lv7C3AcuR6wzmGMMrX1zxpw_VpOT8JPm6WGBk6LrIiQ\",\"type\":\"agent\"},\"type\":\"delegation\",\"version\":\"1.0\"}",
+    "canonical_payload_hex": "7b226361706162696c6974696573223a5b227265706f3a726561642c7265706f3d6d796f72672f2a222c226465706c6f793a6372656174652c656e763d73746167696e67225d2c22636f6e73747261696e7473223a7b2265787069726573223a22323039392d30312d30315430303a30303a30305a222c226d61785f636861696e5f6465707468223a322c226e6f745f6265666f7265223a22323032352d30312d30315430303a30303a30305a227d2c2266726f6d223a7b226964223a227368613235363a65343831363861326333393763646236383666653061393530346336353563363334333432613339376562616335363436393532393138353135653335363931222c226e616d65223a22416c696365222c227075626c69635f6b6579223a2263734372644749334569344969714a2d4978726d67756450516955647931344432566a324a787958587a4d222c2274797065223a2268756d616e227d2c226964223a22642d74657374766563746f722d30303031222c226973737565645f6174223a22323032352d30312d30315430303a30303a30305a222c227369676e6174757265223a22222c22746f223a7b226964223a227368613235363a63383061633862613835323539616330386637363663343962353961383238663664353938356165323135336535633130383935356330333630373532366461222c226e616d65223a22426f622773204167656e74222c227075626c69635f6b6579223a226c763743334163755236777a6d474d4d7258317a7870775f56704f54384a506d365747426b364c72496951222c2274797065223a226167656e74227d2c2274797065223a2264656c65676174696f6e222c2276657273696f6e223a22312e30227d",
+    "signed_delegation": {
+      "type": "delegation",
+      "version": "1.0",
+      "id": "d-testvector-0001",
+      "from": {
+        "type": "human",
+        "id": "sha256:e48168a2c397cdb686fe0a9504c655c634342a397ebac5646952918515e35691",
+        "public_key": "csCrdGI3Ei4IiqJ-IxrmgudPQiUdy14D2Vj2JxyXXzM",
+        "name": "Alice"
+      },
+      "to": {
+        "type": "agent",
+        "id": "sha256:c80ac8ba85259ac08f766c49b59a828f6d5985ae2153e5c108955c03607526da",
+        "public_key": "lv7C3AcuR6wzmGMMrX1zxpw_VpOT8JPm6WGBk6LrIiQ",
+        "name": "Bob's Agent"
+      },
+      "capabilities": [
+        "repo:read,repo=myorg/*",
+        "deploy:create,env=staging"
+      ],
+      "constraints": {
+        "expires": "2099-01-01T00:00:00Z",
+        "max_chain_depth": 2,
+        "not_before": "2025-01-01T00:00:00Z"
+      },
+      "issued_at": "2025-01-01T00:00:00Z",
+      "signature": "BJJcgvJz1wi6w4P46RaX6XoGurauCpyHBSKSB98-9LW0AHc6LPJfi4A1rt_-1Bgt4yBmBjjuG5m9AJ9Sh06bAg"
+    }
+  },
+  "identity_derivation": {
+    "_comment": "ID = \"sha256:\" + hex(SHA-256(ed25519_public_key_bytes))",
+    "_formula": "identity_id = \"sha256:\" + hex(sha256(base64url_decode(public_key)))"
+  },
+  "seed_derivation": {
+    "_comment": "Seeds are SHA-256(\"pact-test-vector:\" + label). Keys are Ed25519 from seed.",
+    "alice": {
+      "identity_id": "sha256:e48168a2c397cdb686fe0a9504c655c634342a397ebac5646952918515e35691",
+      "label": "alice",
+      "public_key": "csCrdGI3Ei4IiqJ-IxrmgudPQiUdy14D2Vj2JxyXXzM",
+      "seed_hex": "0fff7304c3ebc30c7bd506db9f30504b8e9bacee857566d8f5092022f67c8437"
+    },
+    "bob_agent": {
+      "identity_id": "sha256:c80ac8ba85259ac08f766c49b59a828f6d5985ae2153e5c108955c03607526da",
+      "label": "bob-agent",
+      "public_key": "lv7C3AcuR6wzmGMMrX1zxpw_VpOT8JPm6WGBk6LrIiQ",
+      "seed_hex": "521c5cd0b292b461e0b2ca3a99befaf724c9674c5bf0b5307572da406b95e33b"
+    },
+    "deploy_bot": {
+      "identity_id": "sha256:e3a73cfcd1dd800c8e3854ba08095505b045390d4ee764fdb7c17a381c8ce89d",
+      "label": "deploy-bot",
+      "public_key": "vGYTu1-J4uXixr-YDwidUcwcOQ9r2dsaRX6mfgft-IE",
+      "seed_hex": "10f998ec41751ec298cabb33bd46bb4ca59c5df8a3db2ddb640372d8dd737d48"
+    }
+  },
+  "wire_format": {
+    "_comment": "HTTP headers set by SignRequest()",
+    "headers": {
+      "Content-Digest": "sha-256=:base64url(sha256(body)):  (only if body present)",
+      "Signature": "pact=:base64url(ed25519_signature):",
+      "Signature-Input": "pact=(\"@method\" \"@path\" \"@authority\" \"date\" \"x-pact-identity\" \"x-pact-chain\");keyid=\"sha256:...\";created=UNIX;alg=\"ed25519\"",
+      "X-Pact-Chain": "base64url(JSON(DelegationChain))",
+      "X-Pact-Identity": "Agent's identity ID (sha256:...)"
+    },
+    "signature_base_components": [
+      "@method",
+      "@path",
+      "@authority",
+      "date",
+      "x-pact-identity",
+      "x-pact-chain"
+    ],
+    "signature_base_format": "\"component\": value\\n for each component, then \"signature-input\": \u003csignature-input-value\u003e\\n"
+  }
+}

@@ -299,13 +299,51 @@ pact/
 ├── keystore.go         # Key management (FileKeyStore, MemoryKeyStore)
 ├── bridge.go           # OAuth/credential bridge + capability mapper
 ├── example_test.go     # Testable examples (godoc)
-├── *_test.go           # Unit tests
+├── testvectors_test.go # Deterministic cross-language test vectors
+├── *_test.go           # Unit tests (71 total)
+├── testdata/
+│   └── vectors.json    # Generated reference vectors for other SDKs
 ├── cmd/pact/           # CLI binary
 │   └── main.go
+├── CAPABILITIES.md     # Capability naming conventions
 ├── Makefile            # build, test, lint, install
 ├── .golangci.yml       # Linter configuration
 └── go.mod              # Module: github.com/anzal1/pact
 ```
+
+### Capability Conventions
+
+See [CAPABILITIES.md](CAPABILITIES.md) for the shared vocabulary proposals across domains:
+
+| Domain | Resource prefix | Example |
+|---|---|---|
+| Code hosting | `repo:` | `repo:pr:create,repo=myorg/*` |
+| Deployment | `deploy:` | `deploy:create,env=staging` |
+| Storage | `storage:`, `db:` | `storage:read,bucket=my-bucket` |
+| Communication | `email:`, `chat:` | `email:send,to=*@company.com` |
+| AI/ML | `model:` | `model:inference,cost<100USD` |
+| Compute | `compute:`, `dns:` | `compute:create,region=us-east-1` |
+| Filesystem | `fs:` | `fs:write,path=/src/*` |
+| Generic API | `api:` | `api:read,path=/v1/users/*` |
+
+### Cross-Language Test Vectors
+
+Deterministic reference vectors for implementing Pact in other languages. Keys derived from `SHA-256("pact-test-vector:" + label)` — any language can reproduce.
+
+```bash
+# Generate testdata/vectors.json
+go test -run TestVector_GenerateJSON -v
+```
+
+Vectors cover:
+- **Identity derivation** — seed → Ed25519 keypair → `sha256:` ID
+- **Canonical JSON** — RFC 8785 JCS output for known inputs
+- **Delegation signing** — canonical payload, signature bytes, signed object
+- **Capability narrowing** — parent/child pairs with expected coverage results
+- **Content digest** — body → `sha-256=:base64url:` format
+- **Wire format** — HTTP header names, signature base construction
+
+A Python/TypeScript implementation is correct if it produces the same `testdata/vectors.json` values for the same seed inputs.
 
 ### Zero Third-Party Dependencies
 
