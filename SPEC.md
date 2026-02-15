@@ -3,7 +3,7 @@
 **Version:** 1.0  
 **Status:** Draft  
 **Date:** 2026-02-15  
-**Authors:** anzal1, unclaude  
+**Authors:** anzal1  
 **License:** Apache 2.0
 
 ---
