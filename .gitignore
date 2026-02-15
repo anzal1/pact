@@ -1,6 +1,6 @@
 # Binaries
 bin/
-pact
+/pact
 *.exe
 *.exe~
 *.dll
@@ -43,3 +43,6 @@ revocation-*.json
 # Build output
 dist/
 build/
+**/__pycache__/
+*.pyc
+.pytest_cache/
