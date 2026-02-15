@@ -95,13 +95,23 @@ Human (Alice) signs delegation → Agent (carries chain + capabilities)
 ### As a Go library
 
 ```bash
-go get github.com/pact-protocol/pact
+go get github.com/anzal1/pact
 ```
 
 ### CLI
 
 ```bash
-go install github.com/pact-protocol/pact/cmd/pact@latest
+go install github.com/anzal1/pact/cmd/pact@latest
+```
+
+### Build from source
+
+```bash
+git clone https://github.com/anzal1/pact.git
+cd pact
+make build    # binary at bin/pact
+make test     # run all tests
+make check    # fmt + vet + lint + test
 ```
 
 ## Usage
@@ -172,16 +182,22 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 ```
 pact/
-├── identity.go        # Ed25519 keypair generation, signing, rotation
+├── doc.go              # Package documentation
+├── identity.go         # Ed25519 keypair generation, signing, rotation
+├── encoding.go         # Base64url encoding/decoding (RFC 4648 §5)
 ├── canonical.go        # RFC 8785 JSON Canonicalization Scheme
 ├── capabilities.go     # Capability URI parsing, matching, narrowing
 ├── delegation.go       # Delegation chains, sub-delegation, constraints
 ├── signing.go          # RFC 9421 HTTP message signatures
 ├── verification.go     # Provider-side verification pipeline
 ├── revocation.go       # Signed revocation + pluggable store
+├── example_test.go     # Testable examples (godoc)
+├── *_test.go           # Unit tests
 ├── cmd/pact/           # CLI binary
 │   └── main.go
-└── *_test.go           # 33 tests, all passing
+├── Makefile            # build, test, lint, install
+├── .golangci.yml       # Linter configuration
+└── go.mod              # Module: github.com/anzal1/pact
 ```
 
 ### Zero Third-Party Dependencies

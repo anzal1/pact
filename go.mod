@@ -1,3 +1,3 @@
-module github.com/pact-protocol/pact
+module github.com/anzal1/pact
 
 go 1.25.4
