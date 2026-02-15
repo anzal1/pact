@@ -262,6 +262,46 @@ config := pact.MiddlewareConfig{
 }
 ```
 
+### Session Identity (solving agent ephemerality)
+
+Agents are ephemeral — processes that start, do work, and die. But identity must persist. Pact solves this with **hierarchical identity**: a persistent root key delegates to an ephemeral session key.
+
+```
+Human (long-lived)  →  Agent Root (persistent, KeyStore)  →  Session (ephemeral, in-memory)
+                          ↑ persists across sessions          ↑ dies with the process
+```
+
+Each arrow is a Pact delegation. The full chain is offline-verifiable. Like TLS certificates: a root CA in an HSM issues short-lived leaf certificates. The root never touches the wire.
+
+```go
+import "github.com/anzal1/pact"
+
+// Load persistent root identity from KeyStore
+store, _ := pact.DefaultKeyStore()
+
+// Open a session — generates ephemeral key, auto-delegates from root
+session, _ := pact.OpenSession(parentChain, store, "my-agent", pact.SessionConfig{
+    TTL:          1 * time.Hour,           // session key expires in 1h
+    Capabilities: []string{"api:read"},    // narrow from parent chain
+})
+defer session.Close() // zeroizes session private key
+
+// Sign requests with ephemeral session key (full chain attached)
+req, _ := http.NewRequest("GET", "https://api.example.com/data", nil)
+session.SignRequest(req)
+// Provider sees: human → root → session (3-hop chain, all verified locally)
+
+// Sub-delegate to a specialist sub-agent
+subAgent, _ := pact.NewIdentity(pact.EntityAgent, "indexer")
+_, subChain, _ := session.SubDelegate(subAgent, []string{"storage:read"}, 15*time.Minute)
+// Sub-agent chain: human → root → session → indexer
+
+// Renew without re-involving the human
+session.Renew() // new ephemeral key, old key zeroized
+```
+
+**Why this matters:** The root key defines who the agent *is*. Session keys are cheap and disposable — if one leaks, revoke the session delegation, root identity unaffected. The vault is just storage, not an authority. Like a safe-deposit box: the bank holds it, but can't sign your checks.
+
 ### Key Management
 
 ```go
@@ -298,9 +338,10 @@ pact/
 ├── middleware.go       # Drop-in HTTP middleware + context helpers
 ├── keystore.go         # Key management (FileKeyStore, MemoryKeyStore)
 ├── bridge.go           # OAuth/credential bridge + capability mapper
+├── session.go          # Hierarchical session identity (root → ephemeral)
 ├── example_test.go     # Testable examples (godoc)
 ├── testvectors_test.go # Deterministic cross-language test vectors
-├── *_test.go           # Unit tests (71 total)
+├── *_test.go           # Unit tests (92 total)
 ├── testdata/
 │   └── vectors.json    # Generated reference vectors for other SDKs
 ├── cmd/pact/           # CLI binary
