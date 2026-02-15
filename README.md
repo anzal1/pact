@@ -300,7 +300,7 @@ _, subChain, _ := session.SubDelegate(subAgent, []string{"storage:read"}, 15*tim
 session.Renew() // new ephemeral key, old key zeroized
 ```
 
-**Why this matters:** The root key defines who the agent *is*. Session keys are cheap and disposable — if one leaks, revoke the session delegation, root identity unaffected. The vault is just storage, not an authority. Like a safe-deposit box: the bank holds it, but can't sign your checks.
+**Why this matters:** The root key defines who the agent _is_. Session keys are cheap and disposable — if one leaks, revoke the session delegation, root identity unaffected. The vault is just storage, not an authority. Like a safe-deposit box: the bank holds it, but can't sign your checks.
 
 ### Key Management
 
