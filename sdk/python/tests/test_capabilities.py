@@ -1,13 +1,12 @@
 """Unit tests for capabilities module."""
 
+import pact
 import sys
 from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-import pact
 
 
 class TestParseCapability:
@@ -38,7 +37,8 @@ class TestParseCapability:
         assert cap.constraints == {"repo": "myorg/*"}
 
     def test_multiple_constraints(self):
-        cap = pact.parse_capability("deploy:create,env=staging,region=us-east-1")
+        cap = pact.parse_capability(
+            "deploy:create,env=staging,region=us-east-1")
         assert cap.resource == "deploy"
         assert cap.action == "create"
         assert cap.constraints == {"env": "staging", "region": "us-east-1"}

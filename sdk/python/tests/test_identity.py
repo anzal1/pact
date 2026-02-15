@@ -1,13 +1,12 @@
 """Unit tests for identity module."""
 
+import pact
 import sys
 from pathlib import Path
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-import pact
 
 
 class TestNewIdentity:

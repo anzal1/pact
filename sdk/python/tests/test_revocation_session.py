@@ -1,5 +1,6 @@
 """Unit tests for revocation and session modules."""
 
+import pact
 import sys
 from datetime import timedelta
 from pathlib import Path
@@ -7,8 +8,6 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-import pact
 
 
 class TestRevocation:
@@ -159,7 +158,8 @@ class TestSession:
         session = pact.new_session(root, [d])
         sub = pact.new_identity("agent", "sub-agent")
 
-        _, sub_chain = session.sub_delegate(sub, ["api:read"], timedelta(minutes=30))
+        _, sub_chain = session.sub_delegate(
+            sub, ["api:read"], timedelta(minutes=30))
         assert len(sub_chain) == 3  # human->root->session->sub
 
         # Verify the sub-delegation chain
