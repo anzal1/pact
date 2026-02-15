@@ -178,6 +178,110 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
+### Drop-in Middleware (the adoption path)
+
+The fastest way for a provider to adopt Pact — one line to protect any route:
+
+```go
+import "github.com/anzal1/pact"
+
+// Protect your entire API
+mux := http.NewServeMux()
+mux.HandleFunc("/api/data", handleData)
+
+protected := pact.Middleware(pact.MiddlewareConfig{
+    VerifyOptions: pact.VerifyOptions{
+        RequiredCapability: "api:read",
+    },
+})(mux)
+
+http.ListenAndServe(":8080", protected)
+```
+
+**Optional mode** — accept Pact auth when present, fall through when not:
+
+```go
+protected := pact.Middleware(pact.MiddlewareConfig{
+    Optional: true, // No Pact headers? Pass through to existing auth.
+})(mux)
+```
+
+**Dynamic capabilities per route:**
+
+```go
+protected := pact.Middleware(pact.MiddlewareConfig{
+    CapabilityForRequest: func(r *http.Request) string {
+        if r.Method == "GET" { return "api:read" }
+        return "api:write"
+    },
+})(mux)
+```
+
+**Access the verified identity in your handler:**
+
+```go
+func handleData(w http.ResponseWriter, r *http.Request) {
+    result := pact.FromContext(r.Context())
+    if result != nil {
+        log.Printf("Agent: %s, Root: %s", result.AgentID, result.RootAuthority)
+    }
+}
+```
+
+### OAuth Bridge (existing systems, zero changes)
+
+For providers with existing OAuth/API-key backends — bridge Pact chains into credentials your system already understands:
+
+```go
+import "github.com/anzal1/pact"
+
+// Map Pact capabilities to your scopes
+mapper := pact.NewStaticCapabilityMapper(map[string][]string{
+    "api:read":      {"read"},
+    "api:write":     {"read", "write"},
+    "deploy:create": {"deploy"},
+})
+
+// Create a bridge that generates your tokens
+bridge := pact.NewScopedTokenBridge(
+    mapper,
+    15*time.Minute,
+    func(scopes []string, agentID string) (string, error) {
+        // Generate a short-lived token in YOUR auth system
+        return myAuthSystem.CreateScopedToken(scopes, agentID)
+    },
+)
+
+// In your Pact middleware callback:
+config := pact.MiddlewareConfig{
+    OnVerified: func(r *http.Request, result *pact.VerificationResult) {
+        cred, _ := bridge.Exchange(result)
+        // cred.Token is now a short-lived OAuth token
+        // Forward it downstream as your system expects
+    },
+}
+```
+
+### Key Management
+
+```go
+// File-based (default — keys in ~/.pact/keys/)
+store, _ := pact.DefaultKeyStore()
+
+// Generate and store
+agent, _ := pact.NewIdentity(pact.EntityAgent, "my-agent")
+store.Store(agent)
+
+// Load later (survives restarts)
+agent, _ = store.Load("my-agent")
+
+// Share public key (safe)
+pub, _ := store.LoadPublic("my-agent")
+
+// In-memory (for tests or ephemeral agents)
+memStore := pact.NewMemoryKeyStore()
+```
+
 ## Architecture
 
 ```
@@ -191,6 +295,9 @@ pact/
 ├── signing.go          # RFC 9421 HTTP message signatures
 ├── verification.go     # Provider-side verification pipeline
 ├── revocation.go       # Signed revocation + pluggable store
+├── middleware.go       # Drop-in HTTP middleware + context helpers
+├── keystore.go         # Key management (FileKeyStore, MemoryKeyStore)
+├── bridge.go           # OAuth/credential bridge + capability mapper
 ├── example_test.go     # Testable examples (godoc)
 ├── *_test.go           # Unit tests
 ├── cmd/pact/           # CLI binary
