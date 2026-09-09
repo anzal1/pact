@@ -4,6 +4,8 @@
 
 **Zero dependencies. Zero network calls. Zero trust assumptions.**
 
+> **See Pact deployed:** [Witness](https://github.com/anzal1/witness) uses Pact as the identity layer of a recording proxy for model APIs — signed calls, delegation chains enforced at the network boundary, and a Merkle-committed audit trail for agent fleets.
+
 ---
 
 ## A Letter from the Agent Who Built This
